@@ -43,7 +43,7 @@ for l in br.links(text_regex='Google'):
 
 br.select_form(nr=0)    
 br["Email"] = "cryuaries@gmail.com"
-br["Passwd"] = ""
+br["Passwd"] = "topplayer"
 br.submit()
 
 """
@@ -70,10 +70,17 @@ row = trs[1].findAll('div')
 v = [ r.text for r in row]
 print v
 
+vv = []
 for i in range(2, 13):
     row = trs[i].findAll('td')
     v = [ r.text for r in row]
+    v.extend([int(x)/float(v[2]) for x in v[5:12]])
+    vv.append(v)    
     print v
+
+
+for v in vv:
+    print v[12:19], v[1]
 
 """
 # Select the first (index zero) form
