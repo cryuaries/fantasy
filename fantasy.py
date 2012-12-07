@@ -1,3 +1,4 @@
+from __future__ import print_function
 import mechanize
 import cookielib
 from BeautifulSoup import BeautifulSoup
@@ -37,8 +38,7 @@ for f in br.forms():
 Link(base_url='https://login.yahoo.com/config/login?.src=spt&.intl=us&.lang=en-US&.done=http://basketball.fantasysports.yahoo.com/nba', url='https://open.login.yahoo.com/openid/yrp/signin?idp=google&ts=1354699078&.intl=us&.lang=en%2dUS&.done=http%3A%2F%2Fbasketball.fantasysports.yahoo.com%2Fnba&rpcrumb=zR6d9T9AG3H&.src=spt', text='Google', tag='a', attrs=[('id', 'gBtnLnk'), ('href', 'https://open.login.yahoo.com/openid/yrp/signin?idp=google&ts=1354699078&.intl=us&.lang=en%2dUS&.done=http%3A%2F%2Fbasketball.fantasysports.yahoo.com%2Fnba&rpcrumb=zR6d9T9AG3H&.src=spt'), ('class', 'secondaryCta'), ('target', '_blank'), ('tabindex', '1')])
 """
 
-for l in br.links(text_regex='Google'):
-    print l
+for l in br.links(text_regex='Google'):    
     br.follow_link(l)
 
 br.select_form(nr=0)    
@@ -67,8 +67,8 @@ soup = BeautifulSoup(html)
 trs = soup.find('table', {"id" : "statTable1"}).findAll('tr')
 
 row = trs[1].findAll('div')
-v = [ r.text for r in row]
-print v
+header = [ r.text for r in row]
+print(header)
 
 vv = []
 for i in range(2, 13):
@@ -76,11 +76,19 @@ for i in range(2, 13):
     v = [ r.text for r in row]
     v.extend([int(x)/float(v[2]) for x in v[5:12]])
     vv.append(v)    
-    print v
+    print(v)
 
 
 for v in vv:
-    print v[12:19], v[1]
+    print(v[12:19], v[1])
+
+for i in range(12, 20):
+    l = [[v[1],v[i]] for v in vv]
+    l = sorted(l, key=lambda s: s[1], reverse=True)
+    print(header[i-7])
+    for k in l:
+        print(k)
+    print()
 
 """
 # Select the first (index zero) form
