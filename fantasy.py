@@ -33,7 +33,7 @@ for l in br.links(text_regex='Google'):
 
 br.select_form(nr=0)    
 br["Email"] = "cryuaries@gmail.com"
-br["Passwd"] = ""
+br["Passwd"] = "topplayer"
 br.submit()
 
     
@@ -53,23 +53,24 @@ trs = soup.find('table', {"id" : "statTable1"}).findAll('tr')
 row = trs[1].findAll('div')
 header = [ r.text for r in row]
 
-vv = []
+#col: Rank Team GP FG% FT% 3PTM PTS REB AST ST BLK TO
+average_overall_stats = []
 for i in range(2, 13):
     row = trs[i].findAll('td')
-    v = [ r.text for r in row]
-    v.extend([int(x)/float(v[2]) for x in v[5:12]])
-    vv.append(v)    
-    print(v)
+    stat = [ r.text for r in row]
+    average_stat = ([int(x)/float(stat[2]) for x in stat[5:12]])    
+    average_overall_stats.append(stat[:5]+average_stat)    
+    print(average_overall_stats[-1])
 
 # print all stats by rank
-for v in vv:
-    print(v[12:19], v[1])
+for average_stat in average_overall_stats:
+    print(average_stat[3:12], average_stat[1])
 
 # print average stats by rank
-for i in range(12, 19):
-    l = [[v[1],v[i]] for v in vv]
+for i in range(3, 12):
+    l = [[average_stat[1],average_stat[i]] for average_stat in average_overall_stats]
     l = sorted(l, key=lambda s: s[1], reverse=True)
-    print(header[i-7])
+    print(header[i])
     for k in l:
         print(k)
     print()
