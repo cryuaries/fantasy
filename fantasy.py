@@ -22,8 +22,6 @@ br.set_handle_robots(False)
 # User-Agent (this is cheating, ok?)
 br.addheaders = [('User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1')]
 
-
-
 URL  = 'https://login.yahoo.com/config/login?.src=spt&.intl=us&.lang=en-US&.done=http://basketball.fantasysports.yahoo.com/nba'
 # The site we will navigate into, handling it's session
 br.open(URL)
@@ -33,7 +31,7 @@ for l in br.links(text_regex='Google'):
 
 br.select_form(nr=0)    
 br["Email"] = "cryuaries@gmail.com"
-br["Passwd"] = "topplayer"
+br["Passwd"] = raw_input("Input password for " + br["Email"] + ": ")
 br.submit()
 
     
