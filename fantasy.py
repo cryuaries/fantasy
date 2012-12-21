@@ -54,6 +54,7 @@ row = trs[1].findAll('div')
 header = [ r.text for r in row]
 
 #col: Rank Team GP FG% FT% 3PTM PTS REB AST ST BLK TO
+name_col = 1
 average_overall_stats = []
 for i in range(2, 13):
     row = trs[i].findAll('td')
@@ -64,13 +65,36 @@ for i in range(2, 13):
 
 # print all stats by rank
 for average_stat in average_overall_stats:
-    print(average_stat[3:12], average_stat[1])
+    print(average_stat[3:12], average_stat[name_col])
 
 # print average stats by rank
 for i in range(3, 12):
-    l = [[average_stat[1],average_stat[i]] for average_stat in average_overall_stats]
-    l = sorted(l, key=lambda s: s[1], reverse=True)
+    #l = [[average_stat[1],average_stat[i]] for average_stat in average_overall_stats]
+    if i != 11:
+        average_overall_stats = sorted(average_overall_stats, key=lambda s: s[i], reverse=True)
+    else:
+        average_overall_stats = sorted(average_overall_stats, key=lambda s: s[i], reverse=False)
     print(header[i])
-    for k in l:
-        print(k)
+    point = 12
+    for j in average_overall_stats:
+        print(j[i], j[name_col])
+        j.append(point)
+        point-=1
     print()
+    
+# print rank by player
+for average_stat in average_overall_stats:
+    print(average_stat[name_col])
+    points = 0
+    for i in range(3, 12):
+        print(header[i], average_stat[i+9])
+        points += average_stat[i+9]
+    average_stat.append(points)
+    print()
+
+# print total rank
+print("Total Ranks")
+average_overall_stats = sorted(average_overall_stats, key=lambda s: s[-1], reverse=True)
+for j in average_overall_stats:
+    print(j[name_col], j[-1], j[12:21])
+print()
