@@ -2,7 +2,7 @@ from __future__ import print_function
 import mechanize
 import cookielib
 from BeautifulSoup import BeautifulSoup
-import html2text
+#import html2text
 
 # Browser
 br = mechanize.Browser()
@@ -54,7 +54,7 @@ header = [ r.text for r in row]
 #col: Rank Team GP FG% FT% 3PTM PTS REB AST ST BLK TO
 name_col = 1
 average_overall_stats = []
-for i in range(2, 13):
+for i in range(2, 14):
     row = trs[i].findAll('td')
     stat = [ r.text for r in row]
     average_stat = ([int(x)/float(stat[2]) for x in stat[5:12]])    
