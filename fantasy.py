@@ -4,6 +4,10 @@ import cookielib
 from BeautifulSoup import BeautifulSoup
 import html2text
 
+def sort_col(data, col):
+    
+    return
+
 # Browser
 br = mechanize.Browser()
 
@@ -31,7 +35,7 @@ for l in br.links(text_regex='Google'):
 
 br.select_form(nr=0)    
 br["Email"] = "cryuaries@gmail.com"
-br["Passwd"] = raw_input("Input password for " + br["Email"] + ": ")
+br["Passwd"] = raw_input("Password for \"" + br["Email"] + "\": ")
 br.submit()
 
     
@@ -54,10 +58,11 @@ header = [ r.text for r in row]
 #col: Rank Team GP FG% FT% 3PTM PTS REB AST ST BLK TO
 name_col = 1
 average_overall_stats = []
-for i in range(2, 13):
+team_dic = {}
+for i in range(2, 14):
     row = trs[i].findAll('td')
     stat = [ r.text for r in row]
-    average_stat = ([int(x)/float(stat[2]) for x in stat[5:12]])    
+    average_stat = ([int(x)/float(stat[2]) for x in stat[5:12]])        
     average_overall_stats.append(stat[:5]+average_stat)    
     print(average_overall_stats[-1])
 
