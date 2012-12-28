@@ -2,10 +2,8 @@ from __future__ import print_function
 import mechanize
 import cookielib
 from BeautifulSoup import BeautifulSoup
-import html2text
 
 def sort_col(data, col):
-    
     return
 
 # Browser
