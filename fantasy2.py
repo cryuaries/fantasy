@@ -1,5 +1,6 @@
 from BeautifulSoup import BeautifulSoup
 import requests
+import urllib2
 
 CREDS = {'Email': 'cryuaries@gmail.com',                                             
          'Passwd': 'topplayer'}                                            
@@ -13,6 +14,21 @@ USERS = { 'User-agent' : 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Ge
 cookies = {'B':'8k6i9lp8eisn6'}
 
 html = ""
+
+redirect_headers = ""
+
+class SmartRedirectHandler(urllib2.HTTPRedirectHandler):
+    def http_error_301(self, req, fp, code, msg, headers):        
+        result = urllib2.HTTPRedirectHandler.http_error_301(self, req, fp, code, msg, headers)              
+        result.status = code                                 
+        return result                                       
+
+    def http_error_302(self, req, fp, code, msg, headers):
+        redirect_headers = fp.headers        
+        result = urllib2.HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
+        result.headers = redirect_headers
+        result.status = code                                
+        return result               
 
 def test():                                                                
     cookies = get_logged_in_cookies()                                      
@@ -62,12 +78,27 @@ html = post_req.text
 soup = BeautifulSoup(html)
 #br.open(soup.find('meta').get("content")[7:])
 print soup.find('meta').get("content")[7:]
-req = requests.get(soup.find('meta').get("content")[7:], headers=USERS, cookies=cookies)
-cookies = dict(cookies.items() + req.cookies.items())
+#req = requests.get(soup.find('meta').get("content")[7:], headers=USERS, cookies=cookies)
+#cookies = dict(cookies.items() + req.cookies.items())
+
+req = urllib2.Request(soup.find('meta').get("content")[7:])
+req.add_header('User-agent', 'Mozilla/5.0 (Windows NT 5.1; rv:15.0) Gecko/20100101 Firefox/15.0.1')
+req.add_header('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
+req.add_header('Accept-Language', 'zh-tw,en-us;q=0.7,en;q=0.3')
+req.add_header('Accept-Encoding', 'gzip, deflate')
+req.add_header('Connection', 'keep-alive')
+
+opener = urllib2.build_opener(SmartRedirectHandler())
+f = opener.open(req)
+print f.headers
+cc = f.headers['Set-Cookie']
+cc[3].split(', ')[1].split('Y=')[1]
 
 # Open my league standings
 #br.open('http://basketball.fantasysports.yahoo.com/nba/53208/standings')
 #req = requests.get(URLS['home'], headers=USERS, cookies=cookies)
+#print req.text
+#Y=v=1&n=76r9dv6utqrn3&l=02530u3xr0s3041vv1tsutttwrqq003x/o&p=02ivvtw002000000&iz=&r=qh&lg=en-US&intl=us&np=1;
 
 #html = br.response().read()
 """
