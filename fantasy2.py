@@ -1,6 +1,10 @@
+# http://utilitymill.com/help#imports
+
 from BeautifulSoup import BeautifulSoup
 import requests
+import urllib
 import urllib2
+import cookielib
 
 CREDS = {'Email': 'cryuaries@gmail.com',                                             
          'Passwd': 'topplayer'}                                            
@@ -11,11 +15,20 @@ URLS = {'login': 'https://login.yahoo.com/config/login?.src=spt&.intl=us&.lang=e
 USERS = { 'User-agent' : 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1',          
           'Accept-Encoding' : 'gzip, deflate',
           'Connection' : 'keep-alive'}
+
 cookies = {'B':'8k6i9lp8eisn6'}
 
 html = ""
 
 redirect_headers = ""
+
+def get_cookies_header(cookies):
+    s = ""
+    for key, value in cookies.items(): 
+        s = s + key + "=" + value + "; "
+    if s[-2:] == "; ":
+        s = s[:-2]
+    return s
 
 class SmartRedirectHandler(urllib2.HTTPRedirectHandler):
     def http_error_301(self, req, fp, code, msg, headers):        
@@ -60,21 +73,33 @@ def get_logged_in_cookies():
 
 #test()
 
-req = requests.get(URLS['login'], headers=USERS, cookies=cookies)
-cookies = dict(cookies.items() + req.cookies.items())
-html = req.text
+cj = cookielib.CookieJar()
+c = cookielib.Cookie(None, 'B', cookies['B'], '80', '80', 'yahoo.com', 
+       None, None, '/', None, False, False, '', None, None, None)
+cj.set_cookie(c)
+print c
+req = urllib2.Request(URLS['login'])
+req.add_header('User-agent', 'Mozilla/5.0 (Windows NT 5.1; rv:15.0) Gecko/20100101 Firefox/15.0.1')
+opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+f = opener.open(req)
+
+html = f.read()
 soup = BeautifulSoup(html)
 glink = soup.find('div', id='gBtn').find('a', id='gBtnLnk')['href']
 print glink
-req = requests.get(glink, headers=USERS, cookies=cookies)
-hidden_inputs = BeautifulSoup(req.text).find('form', id='gaia_loginform').findAll('input', attrs={'type':'hidden'})
+req = urllib2.Request(glink)
+req.add_header('User-agent', 'Mozilla/5.0 (Windows NT 5.1; rv:15.0) Gecko/20100101 Firefox/15.0.1')
+f = opener.open(req)
+#print f.headers
+#print f.read()
+hidden_inputs = BeautifulSoup(f.read()).find('form', id='gaia_loginform').findAll('input', attrs={'type':'hidden'})
 data = dict(CREDS.items() + dict( (h.get('name'), h.get('value')) for h in hidden_inputs).items() )
-cookies = dict(cookies.items() + req.cookies.items())
-post_req = requests.post(URLS['post'], headers=USERS, cookies=cookies, data=data)
-cookies = dict(cookies.items() + post_req.cookies.items())
-
+#cookies = dict(cookies.items() + req.cookies.items())
+req = urllib2.Request(URLS['post'], urllib.urlencode(dict([k.encode('utf-8'),unicode(v).encode('utf-8')] for k,v in data.items())))
+req.add_header('User-agent', 'Mozilla/5.0 (Windows NT 5.1; rv:15.0) Gecko/20100101 Firefox/15.0.1')
+f = opener.open(req)
 # Handle redirect html 
-html = post_req.text
+html = f.read()
 soup = BeautifulSoup(html)
 #br.open(soup.find('meta').get("content")[7:])
 print soup.find('meta').get("content")[7:]
@@ -92,7 +117,7 @@ opener = urllib2.build_opener(SmartRedirectHandler())
 f = opener.open(req)
 print f.headers
 cc = f.headers['Set-Cookie']
-cc[3].split(', ')[1].split('Y=')[1]
+cc.split(';')[3].split(', ')[1].split('Y=')[1]
 
 # Open my league standings
 #br.open('http://basketball.fantasysports.yahoo.com/nba/53208/standings')
@@ -100,6 +125,7 @@ cc[3].split(', ')[1].split('Y=')[1]
 #print req.text
 #Y=v=1&n=76r9dv6utqrn3&l=02530u3xr0s3041vv1tsutttwrqq003x/o&p=02ivvtw002000000&iz=&r=qh&lg=en-US&intl=us&np=1;
 
+#"""
 #html = br.response().read()
 """
 soup = BeautifulSoup(html)
