@@ -1,7 +1,6 @@
 # http://utilitymill.com/help#imports
 
 from BeautifulSoup import BeautifulSoup
-import requests
 import urllib
 import urllib2
 import cookielib
@@ -113,11 +112,11 @@ req.add_header('Accept-Language', 'zh-tw,en-us;q=0.7,en;q=0.3')
 req.add_header('Accept-Encoding', 'gzip, deflate')
 req.add_header('Connection', 'keep-alive')
 
-opener = urllib2.build_opener(SmartRedirectHandler())
+opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), SmartRedirectHandler())
 f = opener.open(req)
 print f.headers
 cc = f.headers['Set-Cookie']
-cc.split(';')[3].split(', ')[1].split('Y=')[1]
+cc.split(';')[0].split('Y=')[1]
 
 # Open my league standings
 #br.open('http://basketball.fantasysports.yahoo.com/nba/53208/standings')
@@ -125,9 +124,17 @@ cc.split(';')[3].split(', ')[1].split('Y=')[1]
 #print req.text
 #Y=v=1&n=76r9dv6utqrn3&l=02530u3xr0s3041vv1tsutttwrqq003x/o&p=02ivvtw002000000&iz=&r=qh&lg=en-US&intl=us&np=1;
 
+req = urllib2.Request(URLS['home'])
+req.add_header('User-agent', 'Mozilla/5.0 (Windows NT 5.1; rv:15.0) Gecko/20100101 Firefox/15.0.1')
+req.add_header('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
+req.add_header('Accept-Language', 'zh-tw,en-us;q=0.7,en;q=0.3')
+#req.add_header('Accept-Encoding', 'gzip, deflate')
+req.add_header('Connection', 'keep-alive')
+
+f = opener.open(req)
+html = f.read()
+
 #"""
-#html = br.response().read()
-"""
 soup = BeautifulSoup(html)
 
 trs = soup.find('table', {"id" : "statTable1"}).findAll('tr')
