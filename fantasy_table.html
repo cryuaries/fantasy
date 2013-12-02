@@ -1,0 +1,29 @@
+{% for t in tables %}
+<h4 class="tablehead">{{ t.tablehead }}</h4>
+<table cellpadding="0" cellspacing="0" border="0" class="teamtable">
+	<thead>
+		<tr valign="bottom" class="headerRow0">
+			{% for h in t.theads %}
+			<th>
+				<div nowrap="">{{ h }}</div>
+			</th>
+			{% endfor %}
+		</tr>
+	</thead>	
+	<tbody>
+		{% for cols in t.tbodys %}
+			{% if loop.first %}
+				<tr class="odd first">
+			{% elif loop.index is even %}
+				<tr class="even">
+			{% elif loop.index is odd %}
+				<tr class="odd">
+			{% endif %}
+				{% for c in cols %}
+            		<td> {{ c }}</td>
+	        	{% endfor %}
+        		</tr>
+        {% endfor %}
+	</tbody>
+</table>
+{% endfor %}
