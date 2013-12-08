@@ -1,0 +1,24 @@
+body {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    color: black;
+    background-color: #FFF6ED}
+
+th {
+    font-family: Helvetica, Geneva, Arial, SunSans-Regular, sans-serif}
+
+h3 {background: #fdb; border-bottom: 1px solid #db9; padding-left: .5em; margin-left: -.4em; margin-right: -.4em;}
+
+a:link {color: blue}
+a:visited {color: purple}
+
+/* header */
+p.hint {font-size: 80%; font-style: italic;}
+
+address {
+    margin-top: 1em;
+    padding-top: 1em;
+    border-top: thin dotted}
+
+/* Tables of bookmarklets */
+table.summarytable td, table.summarytable th { border-left: none; border-right: none; padding: 2px; border-top: 1px solid #db9; border-bottom: 1px solid #db9; }
+table.summarytable { border-collapse: collapse; }
