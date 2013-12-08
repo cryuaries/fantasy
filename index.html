@@ -1,0 +1,18 @@
+​<!DOCTYPE html>
+{% autoescape true %}
+<html>
+    <body>
+        <form action="/converter" method="post">
+            <div>Mds<input type="text" name="mds" value="{{mds}}"></div>
+            <div><input type="hidden" name="from" value="mds"></div>
+            <div><input type="submit" value="ToTime"></div>
+        </form>
+        <form action="/converter" method="post">
+            <div>Time<input type="text" name="time_hour" maxlength=2 size=2 value="{{time_hour}}">:<input type="text" name="time_minute" maxlength=2 size=2 value="{{time_minute}}">:<input type="text" name="time_second" maxlength=2 size=2 value="{{time_second}}">:<input type="text" name="time_msec" maxlength=3 size=3 value="{{time_msec}}"></div>
+            <div><input type="hidden" name="from" value="time"></div>
+            <div><input type="submit" value="ToMds"></div>
+        </form>        
+        <input type="button" value="button" onClick="sample()">
+    </body>
+</html>
+{% endautoescape %}
