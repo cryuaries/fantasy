@@ -5,6 +5,8 @@ import urllib
 import urllib2
 import cookielib
 
+"""
+
 CREDS = {'Email': 'cryuaries@gmail.com',                                             
          'Passwd': 'topplayer'}                                            
 URLS = {'login': 'https://login.yahoo.com/config/login?.src=spt&.intl=us&.lang=en-US&.done=http://basketball.fantasysports.yahoo.com/nba',
@@ -135,6 +137,10 @@ f = opener.open(req)
 html = f.read()
 
 #"""
+
+f = open("/Users/ryan/Dropbox/gaeutility/index2.html", "r") 
+html = f.read()
+
 soup = BeautifulSoup(html)
 
 trs = soup.find('table', {"id" : "statTable1"}).findAll('tr')
@@ -173,7 +179,7 @@ for i in range(3, 12):
     
 # print rank by player
 for average_stat in average_overall_stats:
-    print(average_stat[name_col])
+    print(average_stat[name_col], "")
     points = 0
     for i in range(3, 12):
         print(header[i], average_stat[i+9])
