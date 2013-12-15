@@ -12,6 +12,13 @@ handlers:
 - url: /js
   static_dir: js
 
+- url: /css
+  static_dir: css
+
+- url: /(.*\.html)
+  static_files: static_html/\1
+  upload: static_html/(.*\.html)
+
 - url: .*
   script: main.app
 
