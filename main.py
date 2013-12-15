@@ -40,7 +40,7 @@ class MainHandler(webapp2.RequestHandler):
         'time_second' : "",
         'time_msec' : "",
         }
-        template = JINJA_ENVIRONMENT.get_template('index.html')
+        template = JINJA_ENVIRONMENT.get_template('template/index.html')
         self.response.write(template.render(template_values))
     def post(self):
         template_values = {
@@ -50,18 +50,14 @@ class MainHandler(webapp2.RequestHandler):
         'time_second' : "",
         'time_msec' : "",
         }
-        template = JINJA_ENVIRONMENT.get_template('index.html')
+        template = JINJA_ENVIRONMENT.get_template('template/index.html')
         self.response.write(template.render(template_values))
 
-class CloneHandler(webapp2.RequestHandler):
+class FantasyHandler(webapp2.RequestHandler):
     def post(self):
         head = self.request.get("head") 
         body = self.request.get("body") 
-        template = JINJA_ENVIRONMENT.get_template('fantasy.html')
-        #self.response.write(template.render({'head': head[:-84], 'body': body}))
-        #self.response.write(template.render({'head': head, 'body': "123"}))
-        #self.response.write(body)
-        #"""
+        template = JINJA_ENVIRONMENT.get_template('template/fantasy.html')
         soup = BeautifulSoup(body)
 
         trs = soup.find('table', {"id" : "statTable1"}).findAll('tr')
@@ -70,8 +66,6 @@ class CloneHandler(webapp2.RequestHandler):
         #header = [ r.string for r in row]
         header = ['Rank', 'Team', 'GP', 'FG%', 'FT%', '3PTM', 'PTS', 'REB', 'AST', 'ST', 'BLK', 'TO']
 
-        #self.response.write(header)
-        #self.response.write("<br>")
         #col: Rank Team GP FG% FT% 3PTM PTS REB AST ST BLK TO
         name_col = 1
         average_overall_stats = []
@@ -81,13 +75,13 @@ class CloneHandler(webapp2.RequestHandler):
             stat = [ r.string for r in row]
             if row[4].a and str(row[4].a.string).endswith("*"):
                 stat[4] = str(row[4].a.string)[:-1]
+            if row[3].a and str(row[3].a.string).endswith("*"):
+                stat[3] = str(row[3].a.string)[:-1]
             stat[name_col] = row[name_col].a.string
             average_stat = ([int(x)/float(stat[2]) for x in stat[5:12]])    
             average_overall_stats.append(stat[:5]+average_stat)    
             row = stat[:5]+average_stat
             tbodys.append(row)
-            #self.response.write(average_overall_stats[-1])
-            #self.response.write("<br>")
 
         average_table = FantasyTable("Average Stats", header, tbodys)
 
@@ -97,68 +91,36 @@ class CloneHandler(webapp2.RequestHandler):
 
         all_tables = [average_table]
 
-        """
-        # print all stats by rank
-        for average_stat in average_overall_stats:
-            self.response.write(average_stat[3:12] )
-            self.response.write(average_stat[name_col])
-            self.response.write("<br>")
-        """
-
         # print average stats by rank
         for i in range(3, 12):
-            #l = [[average_stat[1],average_stat[i]] for average_stat in average_overall_stats]
             if i != 11:
                 average_overall_stats = sorted(average_overall_stats, key=lambda s: s[i], reverse=True)
             else:
                 average_overall_stats = sorted(average_overall_stats, key=lambda s: s[i], reverse=False)
-            #self.response.write(header[i])
-            #self.response.write("<br>")
-            thead = [header[i], "Team"]
+            thead = ["Rank", header[i], "Team"]
             tbodys = []
             point = 12
             for j in average_overall_stats:
-                row = [j[i], j[name_col]]
-                #self.response.write(j[i])
-                #self.response.write(j[name_col])
-                #self.response.write("<br>")
+                row = [str(13-point) +".", j[i], j[name_col]]
                 tbodys.append(row)
                 j.append(point)
                 point-=1
-            all_tables.append(FantasyTable("Stat Rank", thead, tbodys))
+            all_tables.append(FantasyTable(header[i] + " Stat Rank", thead, tbodys))
 
         # print rank by player
-        """
         for average_stat in average_overall_stats:
-            thead = [average_stat[name_col], "Stat Rank"]
-            #self.response.write(average_stat[name_col])
-            tbodys = []
-            #self.response.write("<br>")
             points = 0
             for i in range(3, 12):
                 row = [header[i], average_stat[i+9]] 
-                #self.response.write(header[i])
-                #self.response.write(average_stat[i+9])
-                #self.response.write("<br>")
                 points += average_stat[i+9]
-                tbodys.append(row) 
             average_stat.append(points)
-            all_tables.append(FantasyTable("Stat Rank2", thead, tbodys))
-            #self.response.write()
-        #"""
-        # print total rank
-        # self.response.write("Total Ranks")
-        # self.response.write("<br>")
+
         average_overall_stats = sorted(average_overall_stats, key=lambda s: s[-1], reverse=True)
         thead = ["Team", "Total Rank"] + header[3:12] 
         tbodys = []
         for j in average_overall_stats:
             row = [j[name_col], j[-1]] + j[12:21]
             tbodys.append(row)
-            #self.response.write(j[name_col])
-            #self.response.write(j[-1])
-            #self.response.write(j[12:21])
-            #self.response.write("<br>")
         all_tables.append(FantasyTable("Average Points", thead, tbodys))
         self.response.write(template.render({'head': head[:-84], 'body1': body1, 'body2': body2, 'tables': all_tables}))
 
@@ -196,17 +158,11 @@ class ConverterHandler(webapp2.RequestHandler):
         template_values["time_second"] = time_second
         template_values["time_msec"] = time_msec
     
-        template = JINJA_ENVIRONMENT.get_template('index.html')
+        template = JINJA_ENVIRONMENT.get_template('template/index.html')
         self.response.write(template.render(template_values))
     
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/converter', ConverterHandler),
-    ('/clone', CloneHandler),
+    ('/fantasy', FantasyHandler),
     ], debug=True)
-
-
-
-
-
-

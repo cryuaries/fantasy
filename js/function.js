@@ -24,7 +24,7 @@ function post_to_url(path, params, method) {
 function fantasy() {
     body = document.body.innerHTML;
     head = document.getElementsByTagName('head')[0].innerHTML;
-    post_to_url('http://localhost:8080/clone', {'body': body, 'head': head});
+    post_to_url('http://fantasyahoo.appspot.com/fantasy', {'body': body, 'head': head});
     //post_to_url('http://localhost:8080/clone', {'body': body});
     return true;
 }
