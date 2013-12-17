@@ -21,7 +21,20 @@ function post_to_url(path, params, method) {
     form.submit();
 }
 
+function end_with(str, ends) {
+    if (str.indexOf(ends) == (str.length - ends.length))
+        return true;
+    else
+        return false;
+}
+
 function fantasy() {
+    var url = window.location.href;
+    if (!end_with(url, "/standings"))
+    {
+        alert("Please go to full standings page first.")
+        return false;
+    }
     body = document.body.innerHTML;
     head = document.getElementsByTagName('head')[0].innerHTML;
     post_to_url('http://fantasyahoo.appspot.com/fantasy', {'body': body, 'head': head});
