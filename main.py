@@ -19,10 +19,18 @@ import webapp2
 import jinja2
 import os
 from BeautifulSoup import BeautifulSoup
+from google.appengine.ext import ndb
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'])
+
+class FantasyModel(ndb.Model):
+    """Models an individual Guestbook entry with author, content, and date."""
+    url  = ndb.StringProperty(indexed=False)
+    head = ndb.StringProperty(indexed=False)
+    body = ndb.StringProperty(indexed=False)
+    date = ndb.DateTimeProperty(auto_now_add=True)    
 
 class FantasyTable():
     def __init__(self, tablehead, theads, tbodys):
@@ -30,9 +38,24 @@ class FantasyTable():
         self.theads = theads
         self.tbodys = tbodys
 
+class DataStoreHandlder:
+    def store(self, league, url, head, body):
+        fantasyModle = FantasyModel(parent=ndb.Key("League", league), url = url, head = head, body = body)
+
+        fantasyModle.put()
+
+    def query(self, league):
+        ancestor_key = ndb.Key("League", league)
+
+        fantasyModles_query = FantasyModel.query(
+            ancestor=ancestor_key).order(-FantasyModel.date)
+        fantasyModles = fantasyModles_query.fetch(1)
+        return fantasyModles
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
+        self.response.write("NA")
+        """
         template_values = {
         'mds' : "",
         'time_hour' : "",
@@ -42,7 +65,10 @@ class MainHandler(webapp2.RequestHandler):
         }
         template = JINJA_ENVIRONMENT.get_template('template/index.html')
         self.response.write(template.render(template_values))
+        """
     def post(self):
+        self.response.write("NA")
+        """
         template_values = {
         'mds' : "",
         'time' : "",
@@ -52,13 +78,21 @@ class MainHandler(webapp2.RequestHandler):
         }
         template = JINJA_ENVIRONMENT.get_template('template/index.html')
         self.response.write(template.render(template_values))
+        """
 
 class FantasyHandler(webapp2.RequestHandler):
     def post(self):
+        url = self.request.get("url")
         head = self.request.get("head") 
         body = self.request.get("body") 
         template = JINJA_ENVIRONMENT.get_template('template/fantasy.html')
         soup = BeautifulSoup(body)
+
+        #data store
+        league = url.split('/')[-2]
+        datastore = DataStoreHandlder()
+        datastore.store(league, url, head, body)
+        #end of data store
 
         trs = soup.find('table', {"id" : "statTable1"}).findAll('tr')
 
