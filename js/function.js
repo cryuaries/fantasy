@@ -37,8 +37,8 @@ function fantasy() {
     }
     body = document.body.innerHTML;
     head = document.getElementsByTagName('head')[0].innerHTML;
-    post_to_url('http://fantasyahoo.appspot.com/fantasy', {'body': body, 'head': head});
-    //post_to_url('http://localhost:8080/clone', {'body': body});
+    post_to_url('http://fantasyahoo.appspot.com/fantasy', {'body': body, 'head': head, 'url': url});
+    //post_to_url('http://localhost:8080/fantasy', {'body': body, 'head': head, 'url': url});
     return true;
 }
 
